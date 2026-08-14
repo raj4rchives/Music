@@ -1,0 +1,1 @@
+Advanced starter theme. Add backend/admin panel/database as needed.
