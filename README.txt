@@ -1,1 +1,1 @@
-Advanced starter theme. Add backend/admin panel/database as needed.
+RedGlow Music V2 starter package with premium structure.
