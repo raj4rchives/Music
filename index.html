@@ -56,7 +56,158 @@
     <div id="countdown">—</div>
     <div id="examDateLabel" class="countdown-sub">Set your target exam date above</div>
   </div>
+<!-- ================= FOCUS MODE ================= -->
+<section id="focusMode" class="focus-section">
 
+  <div class="focus-header">
+    <div>
+      <h2>🎯 Focus Mode</h2>
+      <p>Track your lectures, questions and study time.</p>
+    </div>
+  </div>
+
+  <!-- TODAY STATS -->
+  <div class="focus-stats">
+    <div class="focus-card">
+      <span>Today Study</span>
+      <strong id="todayTotal">0m</strong>
+    </div>
+
+    <div class="focus-card">
+      <span>Today Lecture</span>
+      <strong id="todayLecture">0m</strong>
+    </div>
+
+    <div class="focus-card">
+      <span>Today Questions</span>
+      <strong id="todayQuestionsTime">0m</strong>
+    </div>
+
+    <div class="focus-card">
+      <span>Questions Done</span>
+      <strong id="todayQuestionCount">0</strong>
+    </div>
+  </div>
+
+  <!-- TIMER -->
+  <div class="focus-timer-box">
+
+    <div id="focusTimer">00:00:00</div>
+
+    <div class="focus-controls">
+
+      <select id="focusSubject">
+        <option value="Physics">Physics</option>
+        <option value="Chemistry">Chemistry</option>
+        <option value="Mathematics">Mathematics</option>
+      </select>
+
+      <select id="focusActivity">
+        <option value="Lecture">Lecture</option>
+        <option value="Questions Practice">Questions Practice</option>
+        <option value="DPP">DPP</option>
+        <option value="PYQ">PYQ</option>
+        <option value="Homework">Homework</option>
+        <option value="Revision">Revision</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <input
+        type="number"
+        id="focusQuestions"
+        placeholder="Questions"
+        min="0"
+      >
+
+      <button id="startFocusBtn" onclick="startFocus()">
+        ▶ Start Focus
+      </button>
+
+      <button id="stopFocusBtn" onclick="stopFocus()" disabled>
+        ⏹ Stop & Save
+      </button>
+
+    </div>
+  </div>
+
+  <!-- MANUAL LOG -->
+  <div class="manual-log">
+
+    <h3>✍️ Add Study Log Manually</h3>
+
+    <div class="manual-grid">
+
+      <input type="date" id="manualDate">
+
+      <select id="manualSubject">
+        <option value="Physics">Physics</option>
+        <option value="Chemistry">Chemistry</option>
+        <option value="Mathematics">Mathematics</option>
+      </select>
+
+      <select id="manualActivity">
+        <option value="Lecture">Lecture</option>
+        <option value="Questions Practice">Questions Practice</option>
+        <option value="DPP">DPP</option>
+        <option value="PYQ">PYQ</option>
+        <option value="Homework">Homework</option>
+        <option value="Revision">Revision</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <input
+        type="number"
+        id="manualMinutes"
+        placeholder="Minutes"
+        min="1"
+      >
+
+      <input
+        type="number"
+        id="manualQuestionCount"
+        placeholder="Questions"
+        min="0"
+      >
+
+      <input
+        type="text"
+        id="manualNote"
+        placeholder="Note (optional)"
+      >
+
+    </div>
+
+    <button onclick="addManualLog()">
+      ➕ Add Log
+    </button>
+
+  </div>
+
+  <!-- FILTER -->
+  <div class="focus-filter">
+
+    <h3>📅 Study History</h3>
+
+    <input
+      type="date"
+      id="historyDate"
+      onchange="renderFocusHistory()"
+    >
+
+    <button onclick="clearHistoryFilter()">
+      Show All Dates
+    </button>
+
+    <button onclick="downloadStudyReport()">
+      📥 Download Report
+    </button>
+
+  </div>
+
+  <!-- HISTORY -->
+  <div id="focusHistory"></div>
+
+</section>
   <section class="dashboard">
     <div class="section-title">Dashboard</div>
     <div class="stats">
