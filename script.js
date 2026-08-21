@@ -911,3 +911,539 @@ document.addEventListener(
 
   }
 );
+/* ================= FOCUS MODE JS ================= */
+
+let focusStartTime = null;
+let focusInterval = null;
+
+let focusLogs = JSON.parse(
+  localStorage.getItem("focusLogs") || "[]"
+);
+
+
+/* ---------- HELPERS ---------- */
+
+function todayDate() {
+  const d = new Date();
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function formatTime(seconds) {
+
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+
+  return (
+    String(h).padStart(2, "0") +
+    ":" +
+    String(m).padStart(2, "0") +
+    ":" +
+    String(s).padStart(2, "0")
+  );
+}
+
+
+function formatMinutes(minutes) {
+
+  minutes = Math.round(minutes);
+
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+
+  if (h > 0) {
+    return `${h}h ${m}m`;
+  }
+
+  return `${m}m`;
+}
+
+
+/* ---------- SAVE ---------- */
+
+function saveFocusLogs() {
+
+  localStorage.setItem(
+    "focusLogs",
+    JSON.stringify(focusLogs)
+  );
+
+}
+
+
+/* ---------- START TIMER ---------- */
+
+function startFocus() {
+
+  if (focusStartTime) return;
+
+  focusStartTime = Date.now();
+
+  document.getElementById("startFocusBtn").disabled = true;
+  document.getElementById("stopFocusBtn").disabled = false;
+
+  focusInterval = setInterval(updateFocusTimer, 1000);
+
+  updateFocusTimer();
+}
+
+
+/* ---------- TIMER DISPLAY ---------- */
+
+function updateFocusTimer() {
+
+  if (!focusStartTime) return;
+
+  const elapsed = Math.floor(
+    (Date.now() - focusStartTime) / 1000
+  );
+
+  document.getElementById(
+    "focusTimer"
+  ).textContent = formatTime(elapsed);
+}
+
+
+/* ---------- STOP TIMER ---------- */
+
+function stopFocus() {
+
+  if (!focusStartTime) return;
+
+  const elapsedSeconds = Math.floor(
+    (Date.now() - focusStartTime) / 1000
+  );
+
+  clearInterval(focusInterval);
+
+  const minutes = Math.max(
+    1,
+    Math.round(elapsedSeconds / 60)
+  );
+
+  const log = {
+
+    id: Date.now(),
+
+    date: todayDate(),
+
+    subject:
+      document.getElementById("focusSubject").value,
+
+    activity:
+      document.getElementById("focusActivity").value,
+
+    minutes: minutes,
+
+    questions:
+      Number(
+        document.getElementById("focusQuestions").value
+      ) || 0,
+
+    note: "Focus Timer",
+
+    createdAt: new Date().toISOString()
+
+  };
+
+  focusLogs.push(log);
+
+  saveFocusLogs();
+
+  focusStartTime = null;
+  focusInterval = null;
+
+  document.getElementById("focusTimer").textContent =
+    "00:00:00";
+
+  document.getElementById("startFocusBtn").disabled =
+    false;
+
+  document.getElementById("stopFocusBtn").disabled =
+    true;
+
+  document.getElementById("focusQuestions").value = "";
+
+  updateFocusDashboard();
+  renderFocusHistory();
+
+}
+
+
+/* ---------- MANUAL LOG ---------- */
+
+function addManualLog() {
+
+  const date =
+    document.getElementById("manualDate").value;
+
+  const subject =
+    document.getElementById("manualSubject").value;
+
+  const activity =
+    document.getElementById("manualActivity").value;
+
+  const minutes =
+    Number(
+      document.getElementById("manualMinutes").value
+    );
+
+  const questions =
+    Number(
+      document.getElementById("manualQuestionCount").value
+    ) || 0;
+
+  const note =
+    document.getElementById("manualNote").value.trim();
+
+
+  if (!date) {
+    alert("Please select a date.");
+    return;
+  }
+
+  if (!minutes || minutes <= 0) {
+    alert("Please enter study time.");
+    return;
+  }
+
+
+  focusLogs.push({
+
+    id: Date.now(),
+
+    date: date,
+
+    subject: subject,
+
+    activity: activity,
+
+    minutes: minutes,
+
+    questions: questions,
+
+    note: note,
+
+    createdAt: new Date().toISOString()
+
+  });
+
+
+  saveFocusLogs();
+
+  document.getElementById("manualMinutes").value = "";
+  document.getElementById("manualQuestionCount").value = "";
+  document.getElementById("manualNote").value = "";
+
+  updateFocusDashboard();
+  renderFocusHistory();
+
+}
+
+
+/* ---------- TODAY DASHBOARD ---------- */
+
+function updateFocusDashboard() {
+
+  const today = todayDate();
+
+  const logs = focusLogs.filter(
+    log => log.date === today
+  );
+
+
+  const total = logs.reduce(
+    (sum, log) => sum + Number(log.minutes || 0),
+    0
+  );
+
+
+  const lecture = logs
+    .filter(log => log.activity === "Lecture")
+    .reduce(
+      (sum, log) => sum + Number(log.minutes || 0),
+      0
+    );
+
+
+  const questionsTime = logs
+    .filter(log => log.activity === "Questions Practice")
+    .reduce(
+      (sum, log) => sum + Number(log.minutes || 0),
+      0
+    );
+
+
+  const questions = logs.reduce(
+    (sum, log) => sum + Number(log.questions || 0),
+    0
+  );
+
+
+  document.getElementById("todayTotal").textContent =
+    formatMinutes(total);
+
+  document.getElementById("todayLecture").textContent =
+    formatMinutes(lecture);
+
+  document.getElementById("todayQuestionsTime").textContent =
+    formatMinutes(questionsTime);
+
+  document.getElementById("todayQuestionCount").textContent =
+    questions;
+}
+
+
+/* ---------- HISTORY ---------- */
+
+function renderFocusHistory() {
+
+  const container =
+    document.getElementById("focusHistory");
+
+  const selectedDate =
+    document.getElementById("historyDate").value;
+
+
+  let logs = [...focusLogs];
+
+
+  if (selectedDate) {
+
+    logs = logs.filter(
+      log => log.date === selectedDate
+    );
+
+  }
+
+
+  logs.sort(
+    (a, b) =>
+      new Date(b.createdAt) -
+      new Date(a.createdAt)
+  );
+
+
+  if (!logs.length) {
+
+    container.innerHTML = `
+      <div class="focus-history-day">
+        <p>No study logs found.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const grouped = {};
+
+
+  logs.forEach(log => {
+
+    if (!grouped[log.date]) {
+      grouped[log.date] = [];
+    }
+
+    grouped[log.date].push(log);
+
+  });
+
+
+  let html = "";
+
+
+  Object.keys(grouped)
+    .sort()
+    .reverse()
+    .forEach(date => {
+
+      const dayLogs = grouped[date];
+
+
+      const total = dayLogs.reduce(
+        (sum, log) =>
+          sum + Number(log.minutes || 0),
+        0
+      );
+
+
+      html += `
+        <div class="focus-history-day">
+
+          <h3>
+            📅 ${formatDateForDisplay(date)}
+            — ${formatMinutes(total)}
+          </h3>
+      `;
+
+
+      dayLogs.forEach(log => {
+
+        html += `
+
+          <div class="focus-entry">
+
+            <div class="focus-entry-info">
+
+              <strong>
+                ${escapeFocusText(log.subject)}
+                ·
+                ${escapeFocusText(log.activity)}
+              </strong>
+
+              <small>
+                ${escapeFocusText(log.note || "")}
+                ${log.questions ? " · " + log.questions + " questions" : ""}
+              </small>
+
+            </div>
+
+            <div class="focus-entry-time">
+              ${formatMinutes(log.minutes)}
+            </div>
+
+          </div>
+
+        `;
+
+      });
+
+
+      html += `</div>`;
+
+    });
+
+
+  container.innerHTML = html;
+
+}
+
+
+/* ---------- DATE FORMAT ---------- */
+
+function formatDateForDisplay(dateString) {
+
+  const d = new Date(
+    dateString + "T00:00:00"
+  );
+
+  return d.toLocaleDateString(
+    undefined,
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }
+  );
+}
+
+
+/* ---------- CLEAR FILTER ---------- */
+
+function clearHistoryFilter() {
+
+  document.getElementById(
+    "historyDate"
+  ).value = "";
+
+  renderFocusHistory();
+
+}
+
+
+/* ---------- PDF REPORT (REPLACED CSV METHOD) ---------- */
+
+function downloadStudyReport() {
+
+  if (!focusLogs.length) {
+    alert("No study data available.");
+    return;
+  }
+
+  // Check if jsPDF library is loaded
+  if (!window.jspdf) {
+    alert("PDF library loading error. Please check internet connection.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Document Title
+  doc.setFontSize(16);
+  doc.text("JEE Study Progress Report", 14, 15);
+  doc.setFontSize(10);
+  doc.text(`Generated Date: ${todayDate()}`, 14, 22);
+
+  // Table Data Preparation
+  const tableColumn = ["Date", "Subject", "Activity", "Time", "Questions", "Note"];
+  const tableRows = [];
+
+  const sortedLogs = [...focusLogs].sort((a, b) => a.date.localeCompare(b.date));
+
+  sortedLogs.forEach(log => {
+    const rowData = [
+      log.date,
+      log.subject,
+      log.activity,
+      formatMinutes(log.minutes),
+      log.questions || 0,
+      log.note || ""
+    ];
+    tableRows.push(rowData);
+  });
+
+  // Generate Table in PDF
+  doc.autoTable({
+    head: [tableColumn],
+    body: tableRows,
+    startY: 28,
+    theme: 'grid',
+    headStyles: { fillColor: [35, 134, 54] }
+  });
+
+  // Save PDF File
+  doc.save(`study-report-${todayDate()}.pdf`);
+
+}
+
+
+/* ---------- SECURITY ---------- */
+
+function escapeFocusText(value) {
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* ---------- INIT ---------- */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const manualDate =
+      document.getElementById("manualDate");
+
+    if (manualDate) {
+      manualDate.value = todayDate();
+    }
+
+    updateFocusDashboard();
+    renderFocusHistory();
+
+  }
+);
+    
