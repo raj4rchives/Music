@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>370R JEE Advanced Tracker</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="theme.css"><script defer src="theme.js"></script></head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>370R JEE Advanced Tracker</h1>
+      <div class="sub">Unlimited study log → keep adding days as long as you study → dashboard → export PDF.</div>
+    </div>
+    <div class="actions">
+      <button class="secondary top-menu-btn" id="topMenuBtn" type="button" onclick="openFeature('menu')"><span class="top-btn-icon">☰</span><span class="top-btn-label">Menu</span></button>
+      <button class="secondary top-theme-btn" id="topThemeBtn" type="button" onclick="openFeature('themes')"><span class="top-btn-icon">🎨</span><span class="top-btn-label">Themes</span></button>
+      <button class="secondary" id="saveBtn">Save</button>
+      <button class="secondary" id="loadBtn">Load</button>
+      <button class="danger" id="clearBtn">Clear</button>
+      <button class="primary" id="pdfBtn">Download Filled PDF</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="settings">
+      <div class="small">
+        <label>Start date</label>
+        <input id="startDate" type="date">
+      </div>
+      <button class="secondary" id="datesBtn">Fill Dates</button>
+      <button class="secondary" id="addBtn">+ 15 Days</button>
+      <div class="small"><label>JEE Mains target date</label><input id="examDate" type="date" value="2027-01-24"></div>
+      <span class="badge">Target: 70–80 questions/day • CRACK JEE</span>
+    </div>
+    <p class="note">For Physics/Chemistry/Maths, enter the combined <b>HW / CLASS ILLU</b> question count in one cell. DPP and PYQ are entered separately. Values like <b>18Q</b> or <b>12/15</b> count as 18 and 12 questions.</p>
+  </div>
+
+
+
+  <!-- Feature pages: opened from the top Menu / Themes buttons -->
+  <div id="featureOverlay" class="feature-overlay" hidden>
+    <div class="feature-page" id="featurePage">
+      <div class="feature-page-head">
+        <div>
+          <div class="feature-kicker">370R JEE TRACKER</div>
+          <h2 id="featurePageTitle">Menu</h2>
+        </div>
+        <button class="secondary feature-close" id="featureClose" type="button" onclick="closeFeature()">✕</button>
+      </div>
+
+      <div id="menuView" class="feature-view">
+        <button class="menu-feature-btn" data-open-feature="syllabus">
+          <span>📚</span><div><b>Syllabus Tracker</b><small>Add chapter + total lectures → print A4 tracker</small></div>
+        </button>
+        <button class="menu-feature-btn" data-open-feature="backup">
+          <span>💾</span><div><b>Backup & Import</b><small>Export all tracker data to JSON or restore it later</small></div>
+        </button>
+        <button class="menu-feature-btn" data-open-feature="themes">
+          <span>🎨</span><div><b>Themes</b><small>29 different colour styles</small></div>
+        </button>
+        <button class="menu-feature-btn" data-open-feature="todo">
+          <span>📝</span><div><b>Daily TODO</b><small>Date-wise tasks + PDF + analysis</small></div>
+        </button>
+        <button class="menu-feature-btn" data-open-feature="focus">
+          <span>⏱️</span><div><b>Focus Mode</b><small>Timer + study logs + analysis</small></div>
+        </button>
+        <button class="menu-feature-btn" data-open-feature="weekly">
+          <span>📊</span><div><b>Weekly Report</b><small>Questions • Lectures • Focus time chart</small></div>
+        </button>
+      </div>
+
+      <div id="syllabusView" class="feature-view" hidden>
+        <div class="syllabus-toolbar">
+          <button class="secondary" id="syllabusBackBtn" type="button">← Menu</button>
+          <div class="syllabus-actions">
+            <button class="secondary" id="syllabusClearBtn" type="button">Clear Syllabus</button>
+            <button class="primary" id="syllabusPdfBtn" type="button">📄 Download A4 PDF</button>
+          </div>
+        </div>
+        <div class="syllabus-form card">
+          <div class="small"><label>Subject</label><select id="syllabusSubject"><option>Physics</option><option>Chemistry</option><option>Mathematics</option></select></div>
+          <div class="small"><label>Chapter Name</label><input id="syllabusChapterName" type="text" placeholder="e.g. Laws of Motion" maxlength="100"></div>
+          <div class="small"><label>Total Lectures</label><input id="syllabusTotalLectures" type="number" min="1" max="100" step="1" placeholder="e.g. 13"></div>
+          <button class="primary syllabus-add-btn" id="syllabusAddBtn" type="button">+ Add Chapter</button>
+        </div>
+        <p class="note">बस Subject, Chapter Name और Total Lectures डालो. PDF में हर lecture के लिए <b>□ L1   □ L2   □ L3...</b> और JM/Adv/MBBS/OPP/HW/Module/PYQ/Adv Prob/R1/R2/R3 के अलग boxes होंगे. A4 Landscape में print करके offline tick कर सकते हो.</p>
+        <div id="syllabusList" class="syllabus-list"></div>
+      </div>
+
+      <div id="themesView" class="feature-view" hidden>
+        <p class="note">Pick any theme. It is saved automatically and does not affect your study data.</p>
+        <div class="theme-grid theme-grid-48" id="themeGrid">
+          <button class="theme-option" data-theme="classic"><span class="theme-dot theme-classic"></span><b>Classic</b></button>
+          <button class="theme-option" data-theme="peach"><span class="theme-dot theme-peach"></span><b>Peach</b></button>
+          <button class="theme-option" data-theme="pink"><span class="theme-dot theme-pink"></span><b>Bubblegum</b></button>
+          <button class="theme-option" data-theme="lavender"><span class="theme-dot theme-lavender"></span><b>Lavender</b></button>
+          <button class="theme-option" data-theme="mint"><span class="theme-dot theme-mint"></span><b>Mint</b></button>
+          <button class="theme-option" data-theme="ocean"><span class="theme-dot theme-ocean"></span><b>Ocean</b></button>
+          <button class="theme-option" data-theme="rose-dark"><span class="theme-dot theme-rose-dark"></span><b>Rose Dark</b></button>
+          <button class="theme-option" data-theme="forest"><span class="theme-dot theme-forest"></span><b>Forest</b></button>
+          <button class="theme-option" data-theme="sky"><span class="theme-dot theme-sky"></span><b>Sky</b></button>
+          <button class="theme-option" data-theme="sunset"><span class="theme-dot theme-sunset"></span><b>Sunset</b></button>
+          <button class="theme-option" data-theme="coral"><span class="theme-dot theme-coral"></span><b>Coral</b></button>
+          <button class="theme-option" data-theme="lemon"><span class="theme-dot theme-lemon"></span><b>Lemon</b></button>
+          <button class="theme-option" data-theme="aqua"><span class="theme-dot theme-aqua"></span><b>Aqua</b></button>
+          <button class="theme-option" data-theme="teal"><span class="theme-dot theme-teal"></span><b>Teal</b></button>
+          <button class="theme-option" data-theme="indigo"><span class="theme-dot theme-indigo"></span><b>Indigo</b></button>
+          <button class="theme-option" data-theme="violet"><span class="theme-dot theme-violet"></span><b>Violet</b></button>
+          <button class="theme-option" data-theme="plum"><span class="theme-dot theme-plum"></span><b>Plum</b></button>
+          <button class="theme-option" data-theme="berry"><span class="theme-dot theme-berry"></span><b>Berry</b></button>
+          <button class="theme-option" data-theme="cherry"><span class="theme-dot theme-cherry"></span><b>Cherry</b></button>
+          <button class="theme-option" data-theme="coffee"><span class="theme-dot theme-coffee"></span><b>Coffee</b></button>
+          <button class="theme-option" data-theme="sand"><span class="theme-dot theme-sand"></span><b>Sand</b></button>
+          <button class="theme-option" data-theme="slate"><span class="theme-dot theme-slate"></span><b>Slate</b></button>
+          <button class="theme-option" data-theme="midnight"><span class="theme-dot theme-midnight"></span><b>Midnight</b></button>
+          <button class="theme-option" data-theme="neon"><span class="theme-dot theme-neon"></span><b>Neon</b></button>
+          <button class="theme-option" data-theme="aurora"><span class="theme-dot theme-aurora"></span><b>Aurora</b></button>
+          <button class="theme-option" data-theme="ember"><span class="theme-dot theme-ember"></span><b>Ember</b></button>
+          <button class="theme-option" data-theme="grape"><span class="theme-dot theme-grape"></span><b>Grape</b></button>
+          <button class="theme-option" data-theme="ice"><span class="theme-dot theme-ice"></span><b>Ice</b></button>
+          <button class="theme-option" data-theme="amoled"><span class="theme-dot theme-amoled"></span><b>AMOLED</b></button>
+          <button class="theme-option" data-theme="dracula"><span class="theme-dot theme-dracula"></span><b>Dracula</b></button>
+          <button class="theme-option" data-theme="tokyo-night"><span class="theme-dot theme-tokyo-night"></span><b>Tokyo Night</b></button>
+          <button class="theme-option" data-theme="nord-dark"><span class="theme-dot theme-nord-dark"></span><b>Nord Dark</b></button>
+          <button class="theme-option" data-theme="solar-dark"><span class="theme-dot theme-solar-dark"></span><b>Solar Dark</b></button>
+          <button class="theme-option" data-theme="deep-ocean"><span class="theme-dot theme-deep-ocean"></span><b>Deep Ocean</b></button>
+          <button class="theme-option" data-theme="cyberpunk"><span class="theme-dot theme-cyberpunk"></span><b>Cyberpunk</b></button>
+          <button class="theme-option" data-theme="synthwave"><span class="theme-dot theme-synthwave"></span><b>Synthwave</b></button>
+          <button class="theme-option" data-theme="matrix"><span class="theme-dot theme-matrix"></span><b>Matrix</b></button>
+          <button class="theme-option" data-theme="crimson"><span class="theme-dot theme-crimson"></span><b>Crimson</b></button>
+          <button class="theme-option" data-theme="royal-dark"><span class="theme-dot theme-royal-dark"></span><b>Royal Dark</b></button>
+          <button class="theme-option" data-theme="obsidian"><span class="theme-dot theme-obsidian"></span><b>Obsidian</b></button>
+          <button class="theme-option" data-theme="charcoal"><span class="theme-dot theme-charcoal"></span><b>Charcoal</b></button>
+          <button class="theme-option" data-theme="cosmic"><span class="theme-dot theme-cosmic"></span><b>Cosmic</b></button>
+          <button class="theme-option" data-theme="toxic"><span class="theme-dot theme-toxic"></span><b>Toxic</b></button>
+          <button class="theme-option" data-theme="blueberry-dark"><span class="theme-dot theme-blueberry-dark"></span><b>Blueberry</b></button>
+          <button class="theme-option" data-theme="cocoa-dark"><span class="theme-dot theme-cocoa-dark"></span><b>Cocoa Dark</b></button>
+          <button class="theme-option" data-theme="rosewood"><span class="theme-dot theme-rosewood"></span><b>Rosewood</b></button>
+          <button class="theme-option" data-theme="teal-night"><span class="theme-dot theme-teal-night"></span><b>Teal Night</b></button>
+          <button class="theme-option" data-theme="gold-night"><span class="theme-dot theme-gold-night"></span><b>Gold Night</b></button>
+        </div>
+      </div>
+
+      <div id="todoView" class="feature-view" hidden>
+        <div class="todo-form">
+          <div class="small todo-date-wrap"><label>Date</label><input id="todoDate" type="date"></div>
+          <div class="todo-task-wrap"><label>Task</label><input id="todoTask" type="text" maxlength="140" placeholder="e.g. Complete Electrostatics DPP"></div>
+          <div class="todo-category-wrap"><label>Category</label>
+            <select id="todoCategory"><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Lecture</option><option>Revision</option><option>Other</option></select>
+          </div>
+          <button class="primary todo-add-btn" id="addTodoBtn">+ Add Task</button>
+        </div>
+        <div class="todo-toolbar">
+          <div class="todo-filter-wrap"><label>Show tasks for</label><input id="todoFilterDate" type="date"></div>
+          <button class="secondary" id="todayTodoBtn">Today</button>
+          <button class="secondary" id="todoPdfBtn">📄 Download TODO PDF</button>
+        </div>
+        <div class="todo-analysis" id="todoAnalysis">
+          <div class="todo-stat"><b id="todoTotal">0</b><span>Total</span></div>
+          <div class="todo-stat"><b id="todoCompleted">0</b><span>Completed</span></div>
+          <div class="todo-stat"><b id="todoPending">0</b><span>Pending</span></div>
+          <div class="todo-stat"><b id="todoRate">0%</b><span>Completion</span></div>
+        </div>
+        <div class="todo-list" id="todoList"><div class="todo-empty">No tasks for this date. Add your first task ✨</div></div>
+      </div>
+
+      <div id="weeklyView" class="feature-view" hidden>
+        <div class="weekly-toolbar">
+          <div class="small"><label>Week ending</label><input id="weeklyEndDate" type="date"></div>
+          <button class="secondary" id="weeklyThisWeekBtn">This Week</button>
+        </div>
+        <div class="todo-analysis weekly-stats">
+          <div class="todo-stat"><b id="weeklyQuestions">0</b><span>Questions</span></div>
+          <div class="todo-stat"><b id="weeklyLectures">0</b><span>Lectures</span></div>
+          <div class="todo-stat"><b id="weeklyFocus">0m</b><span>Focus time</span></div>
+          <div class="todo-stat"><b id="weeklyTasks">0%</b><span>TODO completion</span></div>
+        </div>
+        <div class="weekly-chart-card"><h3>Questions / day</h3><div class="weekly-bars" id="weeklyQuestionsChart"></div></div>
+        <div class="weekly-chart-card"><h3>Lectures / day</h3><div class="weekly-bars" id="weeklyLecturesChart"></div></div>
+        <div class="weekly-chart-card"><h3>Focus time / day</h3><div class="weekly-bars" id="weeklyFocusChart"></div></div>
+      </div>
+
+      <div id="backupView" class="feature-view" hidden>
+        <div class="backup-panel">
+          <h3>💾 Backup & Import All Data</h3>
+          <p class="note">Backup includes tracker entries, TODOs, Focus logs and your selected theme. Your existing data is not changed unless you import a backup.</p>
+          <div class="backup-actions">
+            <button class="primary" id="exportJsonBtn">⬇️ Export JSON Backup</button>
+            <label class="secondary backup-import-label" for="importJsonInput">⬆️ Import JSON Backup</label>
+            <input id="importJsonInput" type="file" accept=".json,application/json" hidden>
+          </div>
+          <div class="backup-status" id="backupStatus">Ready.</div>
+        </div>
+      </div>
+
+      <div id="focusView" class="feature-view" hidden>
+        <div class="focus-controls">
+          <div class="focus-clock" id="focusClock">00:00:00</div>
+          <div class="focus-fields">
+            <div><label>Subject</label><select id="focusSubject"><option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Other</option></select></div>
+            <div><label>Activity</label><select id="focusActivity"><option>Lecture</option><option>Questions</option><option>Revision</option><option>DPP</option><option>PYQ</option><option>Other</option></select></div>
+            <div><label>Questions</label><input id="focusQuestions" type="number" min="0" value="0"></div>
+            <div><label>Note</label><input id="focusNote" type="text" maxlength="100" placeholder="Optional"></div>
+            <div><label>Manual time (minutes)</label><input id="focusManualMinutes" type="number" min="1" placeholder="e.g. 90"></div>
+            <div><label>Manual log date</label><input id="focusManualDate" type="date"></div>
+          </div>
+          <div class="focus-buttons">
+            <button class="primary" id="focusStartBtn">▶ Start</button>
+            <button class="secondary" id="focusPauseBtn">Ⅱ Pause</button>
+            <button class="secondary" id="focusResetBtn">↻ Reset</button>
+            <button class="primary" id="focusSaveBtn">Save Focus Log</button>
+            <button class="secondary" id="focusManualSaveBtn">➕ Save Manual Time</button>
+          </div>
+        </div>
+        <div class="todo-analysis focus-analysis">
+          <div class="todo-stat"><b id="focusTodayMinutes">0m</b><span>Today focus</span></div>
+          <div class="todo-stat"><b id="focusTodayQuestions">0</b><span>Questions</span></div>
+          <div class="todo-stat"><b id="focusTotalMinutes">0m</b><span>Total focus</span></div>
+          <div class="todo-stat"><b id="focusLogCount">0</b><span>Logs</span></div>
+        </div>
+        <div class="todo-toolbar">
+          <div class="todo-filter-wrap"><label>Show logs for</label><input id="focusFilterDate" type="date"></div>
+          <button class="secondary" id="focusPdfBtn">📄 Download Focus PDF</button>
+        </div>
+        <div class="todo-list" id="focusList"><div class="todo-empty">No focus logs yet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="countdown-card">
+    <div class="countdown-label">JEE MAINS COUNTDOWN</div>
+    <div id="countdown">—</div>
+    <div id="examDateLabel" class="countdown-sub">Set your target exam date above</div>
+  </div>
+
+  <section class="dashboard">
+    <div class="section-title">Dashboard</div>
+    <div class="stats">
+ <div class="stat"><b id="daysDone">0</b><span>Days with entries</span></div>
+      <div class="stat"><b id="lecSum">0</b><span>Total lectures</span></div>
+      <div class="stat"><b id="questionSum">0</b><span>Total questions done</span></div>
+      <div class="stat"><b id="pyqSum">0</b><span>Total PYQs</span></div>
+      <div class="stat"><b id="avgQ">0</b><span>Average questions/day</span></div>
+      <div class="stat"><b id="qTarget">0%</b><span>Average vs 70/day target</span></div>
+    </div>
+
+    <div class="card dashboard-card">
+      <h2>Subject-wise Questions</h2>
+      <div class="table-wrap dashboard-table-wrap">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>TYPE</th>
+              <th>PHYSICS</th>
+              <th>CHEMISTRY</th>
+              <th>MATHEMATICS</th>
+              <th>TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>HW / CLASS ILLU</td><td id="phyWorkSum">0</td><td id="chemWorkSum">0</td><td id="mathWorkSum">0</td><td id="workSum">0</td></tr>
+            <tr><td>DPP</td><td id="phyDppSum">0</td><td id="chemDppSum">0</td><td id="mathDppSum">0</td><td id="dppSum">0</td></tr>
+            <tr><td>PYQ</td><td id="phyPyqSum">0</td><td id="chemPyqSum">0</td><td id="mathPyqSum">0</td><td id="pyqDetailSum">0</td></tr>
+            <tr class="total-row"><td>TOTAL QUESTIONS</td><td id="phyTotal">0</td><td id="chemTotal">0</td><td id="mathTotal">0</td><td id="overallTotal">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="card phase-card">
+    <div class="section-title">Phase / Monthly Reports</div>
+    <div class="settings">
+      <div class="small"><label>Report month</label><input id="reportMonth" type="month"></div>
+      <button class="secondary" id="monthPdfBtn">Monthly PDF Report</button>
+      <button class="secondary" id="jsonExportBtn">Export JSON</button>
+      <label class="file-btn">Import JSON<input id="jsonImport" type="file" accept="application/json" hidden></label>
+    </div>
+    <p class="note">Each calendar month is treated as a separate phase automatically: Phase 1 = first month with data, Phase 2 = next month, etc. Monthly PDF reports contain only that month's log and summary. JSON stores all your data for backup/restore.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Unlimited Study Log</div>
+    <div class="table-wrap">
+      <table id="tracker">
+        <thead>
+          <tr>
+            <th>DATE</th>
+            <th>LEC TOTAL</th>
+            <th>PHY HW /<br>CLASS ILLU</th>
+            <th>CHEM HW /<br>CLASS ILLU</th>
+            <th>MATH HW /<br>CLASS ILLU</th>
+           <th>PHY DPP</th>
+            <th>CHEM DPP</th>
+            <th>MATH DPP</th>
+            <th>PHY PYQ</th>
+            <th>CHEM PYQ</th>
+            <th>MATH PYQ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="script.js"></script>
+<!-- 📲 Install App Popup -->
+<div id="installPopup" class="install-popup">
+  <div class="install-icon">📱</div>
+
+  <div class="install-content">
+    <div class="install-title">Install JEE Tracker</div>
+    <div class="install-text">
+      Install the app for a faster and better experience.
+    </div>
+  </div>
+
+  <button id="installBtn">Install</button>
+  <button id="closeInstall" class="install-close">×</button>
+</div>
+
+<style>
+  .install-popup {
+    position: fixed;
+    left: 15px;
+    right: 15px;
+    bottom: 18px;
+    z-index: 999999;
+
+    display: none;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px;
+    border-radius: 18px;
+
+    background: rgba(20, 20, 20, 0.96);
+    color: white;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    font-family: Arial, sans-serif;
+
+    animation: installSlide .35s ease;
+  }
+
+  .install-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff;
+    font-size: 23px;
+    flex-shrink: 0;
+  }
+
+  .install-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .install-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .install-text {
+    font-size: 12px;
+    opacity: .7;
+    line-height: 1.3;
+  }
+
+  #installBtn {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+
+    background: white;
+    color: black;
+
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .install-close {
+    position: absolute;
+    right: 7px;
+    top: 4px;
+
+    border: none;
+    background: transparent;
+    color: white;
+
+    font-size: 20px;
+    opacity: .6;
+    cursor: pointer;
+  }
+
+  @keyframes installSlide {
+    from {
+      transform: translateY(120px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .install-popup {
+      max-width: 430px;
+      left: auto;
+    }
+  }
+</style>
+  <script>
+let deferredInstallPrompt = null;
+
+const installPopup = document.getElementById("installPopup");
+const installBtn = document.getElementById("installBtn");
+const closeInstall = document.getElementById("closeInstall");
+
+// Check if already running as installed app
+const isInstalled =
+  window.matchMedia("(display-mode: standalone)").matches ||
+  window.navigator.standalone === true;
+
+// Browser gives us the install prompt
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+
+  deferredInstallPrompt = event;
+
+  // Don't show if app is already installed
+  if (!isInstalled) {
+    setTimeout(() => {
+      installPopup.style.display = "flex";
+    }, 1500);
+  }
+});
+
+// Install button
+installBtn.addEventListener("click", async () => {
+  if (!deferredInstallPrompt) {
+    alert("Open this website in Chrome to install the app.");
+    return;
+  }
+
+  deferredInstallPrompt.prompt();
+
+  const result = await deferredInstallPrompt.userChoice;
+
+  if (result.outcome === "accepted") {
+    console.log("App installed");
+  }
+
+  deferredInstallPrompt = null;
+  installPopup.style.display = "none";
+});
+
+// Close button
+closeInstall.addEventListener("click", () => {
+  installPopup.style.display = "none";
+});
+
+// Hide popup after installation
+window.addEventListener("appinstalled", () => {
+  installPopup.style.display = "none";
+  deferredInstallPrompt = null;
+});
+    </script>
+</body>
+</html>

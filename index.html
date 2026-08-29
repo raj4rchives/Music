@@ -1,285 +1,46 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>370R JEE Advanced Tracker</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0d12"><title>EXAMYWEB — Study Smarter</title>
+<link rel="stylesheet" href="portal.css">
+<link rel="stylesheet" href="theme.css"><script defer src="theme.js"></script></head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <div>
-      <h1>370R JEE Advanced Tracker</h1>
-      <div class="sub">Unlimited study log → keep adding days as long as you study → dashboard → export PDF.</div>
-    </div>
-    <div class="actions">
-      <button class="secondary" id="saveBtn">Save</button>
-      <button class="secondary" id="loadBtn">Load</button>
-      <button class="danger" id="clearBtn">Clear</button>
-      <button class="primary" id="pdfBtn">Download Filled PDF</button>
-    </div>
+<div class="bg-orb orb1"></div><div class="bg-orb orb2"></div>
+<nav class="nav container">
+  <a class="brand" href="index.html"><span class="brand-mark">E</span><span>EXAMY<span class="dim">WEB</span></span></a>
+  <div class="navlinks"><a href="#features">Features</a><a href="#plans">Plans</a><a href="#how">How it works</a></div>
+  <div class="nav-actions"><a class="ghost" href="login.html">Log in</a><a class="btn small" href="#plans">Get access <span>→</span></a></div>
+</nav>
+<main>
+<section class="hero container">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="pulse"></span> STUDY OPERATING SYSTEM</div>
+    <h1>Turn your preparation into a <em>system.</em></h1>
+    <p class="lead">A premium study-tracking workspace for JEE, NEET, Boards, CUET and serious exam preparation. Plan your day, track questions, focus sessions and see your progress clearly.</p>
+    <div class="hero-cta"><a class="btn" href="#plans">Start from ₹99 / month <span>↗</span></a><a class="text-btn" href="#features">Explore features <span>↓</span></a></div>
+    <div class="trust"><span>✓ No long-term lock-in</span><span>✓ Your data stays with you</span><span>✓ Built for students</span></div>
   </div>
-
-  <div class="card">
-    <div class="card countdownCard">
-    <div>
-      <label>Exam Target</label>
-      <select id="examTarget">
-        <option value="mains">JEE Main</option>
-        <option value="advanced">JEE Advanced</option>
-      </select>
-    </div>
-    <div>
-      <label>Target Exam Date</label>
-      <input id="examDate" type="date">
-    </div>
-    <div class="countdownValue"><b id="examCountdown">—</b><span id="examLabel">JEE Main countdown</span></div>
-    <span class="badge">Choose your target; only the selected exam countdown is shown.</span>
-  </div>
-
-  <div class="settings">
-      <div class="small">
-        <label>Start date</label>
-        <input id="startDate" type="date">
+  <div class="hero-preview">
+    <div class="window-top"><span class="dots">● ● ●</span><span>EXAMYWEB / Dashboard</span><span class="live">● LIVE</span></div>
+    <div class="preview-body">
+      <aside><div class="mini-logo">E</div><div class="side-active">⌂ <span>Overview</span></div><div>◫ <span>Study Log</span></div><div>◷ <span>Focus</span></div><div>✓ <span>Planner</span></div><div>▦ <span>Syllabus</span></div><div>⌁ <span>Reports</span></div></aside>
+      <div class="dash"><div class="dash-head"><div><small>GOOD EVENING</small><h3>Ready to make today count?</h3></div><div class="avatar">RS</div></div>
+        <div class="mini-stats"><div><small>FOCUS</small><b>3h 42m</b><span>↑ 18% this week</span></div><div><small>QUESTIONS</small><b>126</b><span>↑ 24 today</span></div><div><small>STREAK</small><b>14 days</b><span>Best: 21 days</span></div></div>
+        <div class="chart"><div class="chart-title"><b>Study consistency</b><span>Last 7 days</span></div><div class="bars"><i style="height:42%"></i><i style="height:64%"></i><i style="height:51%"></i><i style="height:78%"></i><i style="height:60%"></i><i style="height:91%"></i><i style="height:72%"></i></div></div>
+        <div class="preview-bottom"><div><small>TODAY'S PLAN</small><p>Physics — Electrostatics</p><p>Chemistry — PYQ revision</p></div><div class="ring"><span>82%</span><small>daily goal</small></div></div>
       </div>
-      <button class="secondary" id="datesBtn">Fill Dates</button>
-      <button class="secondary" id="addBtn">+ 15 Days</button>
-      <div class="small"><label>JEE Advanced target date</label><input id="examDate" type="date" value="2027-05-23"></div>
-      <span class="badge">Target: 70–80 questions/day • Unlimited days</span>
-    </div>
-    <p class="note">For Physics/Chemistry/Maths, enter the combined <b>HW / CLASS ILLU</b> question count in one cell. DPP and PYQ are entered separately. Values like <b>18Q</b> or <b>12/15</b> count as 18 and 12 questions.</p>
-  </div>
-
-  <div class="countdown-card">
-    <div class="countdown-label">JEE ADVANCED COUNTDOWN</div>
-    <div id="countdown">—</div>
-    <div id="examDateLabel" class="countdown-sub">Set your target exam date above</div>
-  </div>
-<!-- ================= FOCUS MODE ================= -->
-<section id="focusMode" class="focus-section">
-
-  <div class="focus-header">
-    <div>
-      <h2>🎯 Focus Mode</h2>
-      <p>Track your lectures, questions and study time.</p>
     </div>
   </div>
-
-  <!-- TODAY STATS -->
-  <div class="focus-stats">
-    <div class="focus-card">
-      <span>Today Study</span>
-      <strong id="todayTotal">0m</strong>
-    </div>
-
-    <div class="focus-card">
-      <span>Today Lecture</span>
-      <strong id="todayLecture">0m</strong>
-    </div>
-
-    <div class="focus-card">
-      <span>Today Questions</span>
-      <strong id="todayQuestionsTime">0m</strong>
-    </div>
-
-    <div class="focus-card">
-      <span>Questions Done</span>
-      <strong id="todayQuestionCount">0</strong>
-    </div>
-  </div>
-
-  <!-- TIMER -->
-  <div class="focus-timer-box">
-
-    <div id="focusTimer">00:00:00</div>
-
-    <div class="focus-controls">
-
-      <select id="focusSubject">
-        <option value="Physics">Physics</option>
-        <option value="Chemistry">Chemistry</option>
-        <option value="Mathematics">Mathematics</option>
-      </select>
-
-      <select id="focusActivity">
-        <option value="Lecture">Lecture</option>
-        <option value="Questions Practice">Questions Practice</option>
-        <option value="DPP">DPP</option>
-        <option value="PYQ">PYQ</option>
-        <option value="Homework">Homework</option>
-        <option value="Revision">Revision</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <input
-        type="number"
-        id="focusQuestions"
-        placeholder="Questions"
-        min="0"
-      >
-
-      <button id="startFocusBtn" onclick="startFocus()">
-        ▶ Start Focus
-      </button>
-
-      <button id="stopFocusBtn" onclick="stopFocus()" disabled>
-         Stop & Save
-      </button>
-
-    </div>
-  </div>
-
-  <!-- MANUAL LOG -->
-  <div class="manual-log">
-
-    <h3>✍️ Add Study Log Manually</h3>
-
-    <div class="manual-grid">
-
-      <input type="date" id="manualDate">
-
-      <select id="manualSubject">
-        <option value="Physics">Physics</option>
-        <option value="Chemistry">Chemistry</option>
-        <option value="Mathematics">Mathematics</option>
-      </select>
-
-      <select id="manualActivity">
-        <option value="Lecture">Lecture</option>
-        <option value="Questions Practice">Questions Practice</option>
-        <option value="DPP">DPP</option>
-        <option value="PYQ">PYQ</option>
-        <option value="Homework">Homework</option>
-        <option value="Revision">Revision</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <input
-        type="number"
-        id="manualMinutes"
-        placeholder="Minutes"
-        min="1"
-      >
-
-      <input
-        type="number"
-        id="manualQuestionCount"
-        placeholder="Questions"
-        min="0"
-      >
-
-      <input
-        type="text"
-        id="manualNote"
-        placeholder="Note (optional)"
-      >
-
-    </div>
-
-    <button onclick="addManualLog()">
-      ➕ Add Log
-    </button>
-
-  </div>
-
-  <!-- FILTER -->
-  <div class="focus-filter">
-
-    <h3>📅 Study History</h3>
-
-    <input
-      type="date"
-      id="historyDate"
-      onchange="renderFocusHistory()"
-    >
-
-    <button onclick="clearHistoryFilter()">
-      Show All Dates
-    </button>
-
-    <button onclick="downloadStudyReport()">
-      📥 Download Report
-    </button>
-
-  </div>
-
-  <!-- HISTORY -->
-  <div id="focusHistory"></div>
-
 </section>
-  <section class="dashboard">
-    <div class="section-title">Dashboard</div>
-    <div class="stats">
-      <div class="stat"><b id="daysDone">0</b><span>Days with entries</span></div>
-      <div class="stat"><b id="lecSum">0</b><span>Total lectures</span></div>
-      <div class="stat"><b id="questionSum">0</b><span>Total questions done</span></div>
-      <div class="stat"><b id="pyqSum">0</b><span>Total PYQs</span></div>
-      <div class="stat"><b id="avgQ">0</b><span>Average questions/day</span></div>
-      <div class="stat"><b id="qTarget">0%</b><span>Average vs 70/day target</span></div>
-    </div>
-
-    <div class="card dashboard-card">
-      <h2>Subject-wise Questions</h2>
-      <div class="table-wrap dashboard-table-wrap">
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th>TYPE</th>
-              <th>PHYSICS</th>
-              <th>CHEMISTRY</th>
-              <th>MATHEMATICS</th>
-              <th>TOTAL</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>HW / CLASS ILLU</td><td id="phyWorkSum">0</td><td id="chemWorkSum">0</td><td id="mathWorkSum">0</td><td id="workSum">0</td></tr>
-            <tr><td>DPP</td><td id="phyDppSum">0</td><td id="chemDppSum">0</td><td id="mathDppSum">0</td><td id="dppSum">0</td></tr>
-            <tr><td>PYQ</td><td id="phyPyqSum">0</td><td id="chemPyqSum">0</td><td id="mathPyqSum">0</td><td id="pyqDetailSum">0</td></tr>
-            <tr class="total-row"><td>TOTAL QUESTIONS</td><td id="phyTotal">0</td><td id="chemTotal">0</td><td id="mathTotal">0</td><td id="overallTotal">0</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <div class="card phase-card">
-    <div class="section-title">Phase / Monthly Reports</div>
-    <div class="settings">
-      <div class="small"><label>Report month</label><input id="reportMonth" type="month"></div>
-      <button class="secondary" id="monthPdfBtn">Monthly PDF Report</button>
-      <button class="secondary" id="jsonExportBtn">Export JSON</button>
-      <label class="file-btn">Import JSON<input id="jsonImport" type="file" accept="application/json" hidden></label>
-    </div>
-    <p class="note">Each calendar month is treated as a separate phase automatically: Phase 1 = first month with data, Phase 2 = next month, etc. Monthly PDF reports contain only that month's log and summary. JSON stores all your data for backup/restore.</p>
-  </div>
-
-  <div class="card">
-    <div class="section-title">Unlimited Study Log</div>
-    <div class="table-wrap">
-      <table id="tracker">
-        <thead>
-          <tr>
-            <th>DATE</th>
-            <th>LEC TOTAL</th>
-            <th>PHY HW /<br>CLASS ILLU</th>
-            <th>CHEM HW /<br>CLASS ILLU</th>
-            <th>MATH HW /<br>CLASS ILLU</th>
-            <th>CHEM DPP</th>
-            <th>MATH DPP</th>
-            <th>PHY PYQ</th>
-            <th>CHEM PYQ</th>
-            <th>MATH PYQ</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="script.js"></script>
-</body>
-</html>
+<section class="marquee"><div class="container marquee-inner"><span>JEE MAIN</span><span>JEE ADVANCED</span><span>NEET</span><span>CBSE</span><span>CUET</span><span>BOARDS</span><span>OTHER EXAMS</span></div></section>
+<section id="features" class="section container"><div class="section-head"><div><div class="eyebrow">ONE WORKSPACE</div><h2>Everything you need to track the work that actually matters.</h2></div><p>Not another notes app. EXAMYWEB is built around measurable preparation: time, questions, lectures, tasks and consistency.</p></div>
+<div class="feature-grid"><article class="feature featured"><span class="icon">◷</span><h3>Focus Mode</h3><p>Run focused study sessions, tag the subject and activity, then keep a date-wise history of your actual study time.</p><div class="fake-pill">03:42:18 &nbsp; • &nbsp; Physics</div></article><article class="feature"><span class="icon">▦</span><h3>Syllabus Tracker</h3><p>Break chapters into lectures and track completion without losing the big picture.</p></article><article class="feature"><span class="icon">✓</span><h3>Daily Planner</h3><p>Set date-wise tasks, mark them complete and measure your completion rate.</p></article><article class="feature"><span class="icon">⌁</span><h3>Progress Analytics</h3><p>See questions, lectures and focus time through clean weekly and dashboard summaries.</p></article><article class="feature"><span class="icon">▤</span><h3>PDF Reports</h3><p>Export your study records and printable trackers whenever you need them.</p></article><article class="feature"><span class="icon">↯</span><h3>Multiple Exam Paths</h3><p>Choose JEE, NEET, Boards, CUET or a custom path and keep your workspace relevant.</p></article></div></section>
+<section id="plans" class="section pricing container"><div class="section-head centered"><div><div class="eyebrow">SIMPLE PRICING</div><h2>Start small. Upgrade when your preparation gets serious.</h2></div><p>₹99 is the entry plan. Need more? Move up without rebuilding your workspace.</p></div>
+<div class="plan-grid"><article class="plan"><div class="plan-top"><span>STARTER</span><b>₹99<small>/month</small></b></div><p>For students who want a clean daily tracking system.</p><ul><li>Study log</li><li>Focus Mode</li><li>Daily planner</li><li>Basic reports</li></ul><a class="btn full" href="login.html?plan=starter">Choose Starter →</a></article><article class="plan popular"><div class="popular-tag">MOST POPULAR</div><div class="plan-top"><span>PRO</span><b>₹199<small>/month</small></b></div><p>For serious preparation with deeper tracking.</p><ul><li>Everything in Starter</li><li>Syllabus tracker</li><li>Weekly analytics</li><li>PDF exports</li></ul><a class="btn full" href="login.html?plan=pro">Choose Pro →</a></article><article class="plan"><div class="plan-top"><span>ELITE</span><b>₹299<small>/month</small></b></div><p>For students who want the complete workspace.</p><ul><li>Everything in Pro</li><li>Advanced reports</li><li>Priority feature access</li><li>Future upgrades</li></ul><a class="btn full" href="login.html?plan=elite">Choose Elite →</a></article></div>
+<div class="price-note">Prices shown in INR. ₹99 is positioned as approximately the $1/month entry offer; taxes/payment-provider fees may apply.</div></section>
+<section id="how" class="section container"><div class="section-head"><div><div class="eyebrow">HOW IT WORKS</div><h2>From signup to your tracker in minutes.</h2></div></div><div class="steps"><div><span>01</span><h3>Create account</h3><p>Pick your exam and plan. Your account becomes your study identity.</p></div><div><span>02</span><h3>Complete payment</h3><p>Pay through UPI/Paytm checkout. Your order stays tied to your account.</p></div><div><span>03</span><h3>Enter the tracker</h3><p>After verified payment, access your personal EXAMYWEB study workspace.</p></div></div></section>
+<section class="founder container"><div class="founder-card"><div class="founder-mark">RS</div><div><div class="eyebrow">BUILT BY</div><h2>Raj Sharma</h2><p>Founder, EXAMYWEB</p></div><div class="founder-line">Built for students who want to stop guessing and start measuring.</div></div></section>
+</main>
+<footer class="container footer"><span>© 2026 EXAMYWEB</span><span>Study smarter. Track honestly. Improve daily.</span><a href="login.html">Client login →</a></footer>
+</body></html>
